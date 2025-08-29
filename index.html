@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小神随机短视频</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .video-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        video {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        select {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            color: #666;
+        }
+        .error-message {
+            text-align: center;
+            margin: 20px 0;
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>小神随机短视频</h1>
+        
+        <div class="controls">
+            <select id="videoType">
+                <option value="jk">jk类型视频</option>
+                <option value="YuMeng">你得欲梦视频</option>
+                <option value="NvDa">女大视频</option>
+                <option value="NvGao">女高视频</option>
+                <option value="ReWu">热舞类型视频</option>
+                <option value="QingCun">清纯类型视频</option>
+                <option value="YuZu">玉足类型视频</option>
+                <option value="SheJie">蛇姐类型视频</option>
+                <option value="ChuanDa">穿搭类型视频</option>
+                <option value="GaoZhiLiangXiaoJieJie">高质量小姐姐视频</option>
+                <option value="HanFu">汉服类型视频</option>
+                <option value="HeiSi">黑手类型视频</option>
+                <option value="BianZhuang">变装类型视频</option>
+                <option value="LuoLi">萝莉类型视频</option>
+                <option value="TianMei">甜妹类型视频</option>
+                <option value="BaiSi">白丝类型视频</option>
+            </select>
+            
+            <button onclick="loadRandomVideo()">随机视频</button>
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">加载中...</div>
+        <div id="errorMessage" class="error-message"></div>
+        
+        <div class="video-container">
+            <video id="videoPlayer" controls></video>
+        </div>
+    </div>
+
+    <script>
+        // 视频类型数组
+        const videoTypes = [
+            'jk', 'YuMeng', 'NvDa', 'NvGao', 'ReWu', 
+            'QingCun', 'YuZu', 'SheJie', 'ChuanDa', 
+            'GaoZhiLiangXiaoJieJie', 'HanFu', 'HeiSi', 
+            'BianZhuang', 'LuoLi', 'TianMei', 'BaiSi'
+        ];
+        
+        // 获取随机视频类型
+        function getRandomVideoType() {
+            const randomIndex = Math.floor(Math.random() * videoTypes.length);
+            return videoTypes[randomIndex];
+        }
+        
+        // 显示错误消息
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // 5秒后自动隐藏错误消息
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // 加载随机视频
+        function loadRandomVideo() {
+            const loadingElement = document.getElementById('loading');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoTypeSelect = document.getElementById('videoType');
+            const errorElement = document.getElementById('errorMessage');
+            
+            // 重置状态
+            loadingElement.style.display = 'block';
+            videoPlayer.style.display = 'none';
+            errorElement.style.display = 'none';
+            
+            // 获取视频类型（从下拉框或随机）
+            const type = videoTypeSelect.value;
+            // 如果要随机选择类型，可以使用下面这行代码替换上面这行
+            // const type = getRandomVideoType();
+            
+            // 构建API URL
+            const apiUrl = `http://api.mmp.cc/api/ksvideo?type=mp4&id=${type}`;
+            
+            // 直接设置视频源，因为API返回的是视频文件本身
+            videoPlayer.src = apiUrl;
+            videoPlayer.style.display = 'block';
+            
+            // 监听视频加载错误
+            videoPlayer.onerror = function() {
+                showError('视频加载失败，请重试');
+                loadingElement.style.display = 'none';
+            };
+            
+            // 监听视频加载完成
+            videoPlayer.onloadeddata = function() {
+                loadingElement.style.display = 'none';
+            };
+        }
+        
+        // 页面加载时自动获取一个随机视频
+        window.onload = loadRandomVideo;
+    </script>
+</body>
+</html>
+
